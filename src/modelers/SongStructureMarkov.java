@@ -7,12 +7,12 @@ import java.util.TreeMap;
 public class SongStructureMarkov
 {
     private int order;
-    private TreeMap<String, ArrayList<String>> songStructureMap;
+    private final TreeMap<String, ArrayList<String>> songStructureMap;
     private String[] songStructures;
     
     public SongStructureMarkov(int order) {
         this.order = order;
-        this.songStructureMap = new TreeMap<String, ArrayList<String>>();
+        this.songStructureMap = new TreeMap<>();
     }
     
     public void setTraining(String[] songStructures) {
@@ -24,7 +24,7 @@ public class SongStructureMarkov
                     this.songStructureMap.get(verseSection).add(structure.substring(this.order + i, this.order + i + 1));
                 }
                 else {
-                    ArrayList<String> nextValues = new ArrayList<String>();
+                    ArrayList<String> nextValues = new ArrayList<>();
                     nextValues.add(structure.substring(this.order + i, this.order + i + 1));
                     this.songStructureMap.put(verseSection, nextValues);
                 }
@@ -53,16 +53,13 @@ public class SongStructureMarkov
         String current = this.songStructures[arrayIndex].substring(0, this.order);
         songStructureBuilder.append(current);
         for (int i = 0; i < numVerses; ++i) {
-            if (String.valueOf(songStructureBuilder.charAt(songStructureBuilder.length() - 1)).equalsIgnoreCase("O")) {
-                break;
-            }
             ArrayList<String> nextValues = this.songStructureMap.get(current);
-            if (nextValues.isEmpty()) {
-                nextValues = new ArrayList<String>();
+            if (nextValues == null || nextValues.isEmpty()) {
+                nextValues = new ArrayList<>();
             }
-            arrayIndex = random.nextInt(nextValues.size());
-            String nextItem = nextValues.get(arrayIndex);
-            if (nextItem.isEmpty()) {
+            arrayIndex = nextValues.isEmpty() ? 0 : random.nextInt(nextValues.size());
+            String nextItem = nextValues.isEmpty() ? "" : nextValues.get(arrayIndex);
+            if (nextItem == null || nextItem.isEmpty()) {
                 break;
             }
             songStructureBuilder.append(nextItem);

@@ -2,7 +2,6 @@ package main;
 
 import java.util.Arrays;
 import java.io.IOException;
-import java.io.FileNotFoundException;
 import utils.SongGeneratorUtils;
 import utils.FileParser;
 import java.util.ResourceBundle;
@@ -16,34 +15,37 @@ public class SongGenerator
         FileParser fileParser = new FileParser();
         SongGenerator.filePathAndVariables = ResourceBundle.getBundle("FilePathAndVariables");
         String pathToSongs = SongGenerator.filePathAndVariables.getString("lanaDelRey");
-        int songOrder = Integer.valueOf(SongGenerator.filePathAndVariables.getString("defaultSongOrder"));
-        int songStructureOrder = Integer.valueOf(SongGenerator.filePathAndVariables.getString("defaultSongStructureOrder"));
+        int songOrder = Integer.parseInt(SongGenerator.filePathAndVariables.getString("defaultSongOrder"));
+        int songStructureOrder = Integer.parseInt(SongGenerator.filePathAndVariables.getString("defaultSongStructureOrder"));
         try {
             SongGeneratorUtils songGeneratorUtils = new SongGeneratorUtils();
             String song = songGeneratorUtils.generateFullSong(pathToSongs, songOrder, songStructureOrder, fileParser);
             printSong(song);
         }
-        catch (FileNotFoundException e) {
-            System.err.println("FileNotFoundException: " + e.getMessage());
-        }
         catch (IOException e) {
-            System.err.println("IOEException: " + e.getMessage());
+            System.err.println("IOException: " + e.getMessage());
         }
     }
     
     private static void printSong(String s) {
         String[] words = s.split("\\s");
         int wordsOnLine = 0;
-        for (int i = 0; i < words.length; ++i) {
-            boolean hasProperNoun = Arrays.asList(SongGenerator.filePathAndVariables.getString("properNouns").split(", ")).contains(words[i]);
-            if ((words[i].length() >= 1 && Character.isUpperCase(words[i].charAt(0)) && !hasProperNoun) || (hasProperNoun && wordsOnLine > 8) || (words[i].length() > 1 && words[i].equals(words[i].toUpperCase()))) {
-                System.out.println("\n");
+        for (String word : words) {
+            boolean hasProperNoun = Arrays.asList(SongGenerator.filePathAndVariables.getString("properNouns")
+                    .split(", ")).contains(word);
+            boolean isVerseType = word.length() > 4 && word.equals(word.toUpperCase())
+                    && (word.matches("^[a-zA-Z]*$") || word.length() >= 10);
+            if ((word.length() >= 1 && Character.isUpperCase(word.charAt(0)) && !hasProperNoun) ||
+                    (hasProperNoun && wordsOnLine >= 8) || isVerseType) {
+                System.out.println();
                 wordsOnLine = 0;
+                if(isVerseType) System.out.println();
             }
-            System.out.println(words[i] + " ");
+            System.out.print(word + " ");
             ++wordsOnLine;
-            if (words[i].length() > 1 && words[i].equals(words[i].toUpperCase())) {
-                System.out.println("\n");
+            if (isVerseType) {
+                System.out.println();
+                System.out.println();
                 wordsOnLine = 0;
             }
         }

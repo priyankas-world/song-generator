@@ -8,12 +8,13 @@ public class FileParser
 {
     public String parseFileToString(String fileName) throws FileNotFoundException {
         File file = new File(fileName);
-        Scanner scanner = new Scanner(file);
-        StringBuilder sb = new StringBuilder();
-        while (scanner.hasNext()) {
-            sb.append(scanner.next());
-            sb.append(" ");
-        }
-        return sb.toString();
+        try (Scanner scanner = new Scanner(file)) {
+			StringBuilder sb = new StringBuilder();
+			while (scanner.hasNext()) {
+			    sb.append(scanner.next());
+			    sb.append(" ");
+			}
+			return sb.toString();
+		}
     }
 }

@@ -3,7 +3,6 @@ package modelers;
 public class WordGram implements Comparable<WordGram>
 {
     private String[] words;
-    private int hashCode;
     
     WordGram(String[] source, int start, int size) {
         final String[] words = new String[size];
@@ -16,14 +15,6 @@ public class WordGram implements Comparable<WordGram>
             }
         }
         this.words = words;
-    }
-    
-    public int hashCode() {
-        int hashCode = 0;
-        for (int i = 0; i < this.words.length; ++i) {
-            hashCode = this.words[i].hashCode() * (i + 1);
-        }
-        return this.hashCode = hashCode;
     }
     
     public boolean equals(Object obj) {

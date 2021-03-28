@@ -1,12 +1,9 @@
 package modelers;
 
 import java.util.Iterator;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Random;
 import java.util.stream.Stream;
-import java.util.function.Predicate;
-import java.util.Objects;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.ArrayList;
@@ -59,7 +56,7 @@ public class LyricsModeler
                     Stream<String> stream = Arrays.stream(this.filePathAndVariables.getString("validVerseTypes").split(", "));
                     boolean containsIgnoreCase = stream.anyMatch(currentVerseType::equalsIgnoreCase);
                     if (!containsIgnoreCase) {
-                        System.err.println("ERROR: invalid verse type: " currentVerseType);
+                        System.err.println("ERROR: invalid verse type: " + currentVerseType);
                         break;
                     }
                     songStructureBuilder.append(currentVerseType);
@@ -72,18 +69,16 @@ public class LyricsModeler
             this.songStructures.add(songStructureBuilder.toString());
             this.allSongsAndLyrics.add(songLyrics);
         }
-        for (int i = 0; i < this.allSongsAndLyrics.size(); ++i) {
-            ArrayList<String> currentSong = this.allSongsAndLyrics.get(i);
+        for (ArrayList<String> currentSong : this.allSongsAndLyrics) {
             for (int j = 0; j < currentSong.size() - this.order; ++j) {
                 ++this.totalNumWords;
-                WordGram wordGram = new WordGram((String[])currentSong.toArray(new String[0]), j, this.order);
+                WordGram wordGram = new WordGram(currentSong.toArray(new String[0]), j, this.order);
                 String word = currentSong.get(this.order + j);
                 if (this.wordGramMap.containsKey(wordGram)) {
-                    this.wordGramMap.get(wordGram).add(word2);
-                }
-                else {
-                    HashSet<String> nextValues = new HashSet<String>();
-                    nextValues.add(word2);
+                    this.wordGramMap.get(wordGram).add(word);
+                } else {
+                    HashSet<String> nextValues = new HashSet<>();
+                    nextValues.add(word);
                     this.wordGramMap.put(wordGram, nextValues);
                 }
                 if (j + this.order > currentSong.size()) {
@@ -105,14 +100,12 @@ public class LyricsModeler
             Random random = new Random();
             String verseType = String.valueOf(songStructure.charAt(i));
             songBuilder.append(this.filePathAndVariables.getString(verseType).toUpperCase());
-            songBuilder.append("\n");
+            songBuilder.append(" ");
             int min = Collections.min(this.verseWordCountMap.get(verseType));
             int max = Collections.max(this.verseWordCountMap.get(verseType));
             int numWordsInVerse = random.nextInt(max - min) + min;
             String verse = this.createVerse(verseType, numWordsInVerse, chorus, preChorus, postChorus);
-            songBuilder.append("\n");
             songBuilder.append(verse);
-            songBuilder.append("\n");
             if (verseType.equalsIgnoreCase(this.filePathAndVariables.getString("CHORUS"))) {
                 chorus = verse;
             }
@@ -133,13 +126,13 @@ public class LyricsModeler
             }
             return chorus;
         }
-        if (String.valueOf(verseType).equalsIgnoreCase(this.filePathAndVariables.getString("PRE-CHORUS"))) {
+        if (verseType.equalsIgnoreCase(this.filePathAndVariables.getString("PRE-CHORUS"))) {
             if (preChorus.isEmpty()) {
                 preChorus = this.getRandomWords(numWordsInVerse);
             }
             return preChorus;
         }
-        if (String.valueOf(verseType).equalsIgnoreCase(this.filePathAndVariables.getString("POST-CHORUS"))) {
+        if (verseType.equalsIgnoreCase(this.filePathAndVariables.getString("POST-CHORUS"))) {
             if (postChorus.isEmpty()) {
                 postChorus = this.getRandomWords(numWordsInVerse);
             }
@@ -168,7 +161,7 @@ public class LyricsModeler
         for (int j = 0; j < numWords - this.order; ++j) {
             HashSet<String> nextValues = this.wordGramMap.get(current);
             if (nextValues == null) {
-                nextValues = new HashSet<String>();
+                nextValues = new HashSet<>();
             }
             if (nextValues.size() == 0) {
                 break;
@@ -186,6 +179,6 @@ public class LyricsModeler
             sb.append(" ");
             current = current.shiftAdd(next);
         }
-        return sb.toString().trim();
+        return sb.toString();
     }
 }
