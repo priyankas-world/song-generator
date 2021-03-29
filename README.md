@@ -91,7 +91,7 @@ Album licensed to Polydor Ltd. (UK) & Interscope Records
 - Produced by Dan Heath
 - Written by Dan Heath & Lana Del Rey
 ## Ultraviolence
-Album licensed to UMG Recordings
+Album licensed to Polydor Ltd. (UK) & Interscope Records
 ### Cruel World
 - Produced by Dan Auerbach
 - Written by Dan Auerbach, Lana Del Rey & Blake Stranathan
