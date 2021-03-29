@@ -33,7 +33,7 @@ public class SongGenerator
         for (String word : words) {
             boolean hasProperNoun = Arrays.asList(SongGenerator.filePathAndVariables.getString("properNouns")
                     .split(", ")).contains(word);
-            boolean isVerseType = word.length() > 4 && word.equals(word.toUpperCase())
+            boolean isVerseType = word.length() >= 4 && word.equals(word.toUpperCase())
                     && (word.matches("^[a-zA-Z]*$") || word.length() >= 10);
             if ((word.length() >= 1 && Character.isUpperCase(word.charAt(0)) && !hasProperNoun) ||
                     (hasProperNoun && wordsOnLine >= 8) || isVerseType) {
